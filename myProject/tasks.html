@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+</head>
+
+
+<script>
+    let ListTasks = ["Date", "Time", "Text"];
+
+
+
+
+    function submit() {
+        var d = 0;
+
+        if (document.getElementById("Date").value == "" || document.getElementById("Date").value < Date.now())//change to block
+            document.getElementById("date").style.display = 'block';
+        else {
+            document.getElementById("date").style.display = 'none';
+            d++
+        }
+        if (document.getElementById("Time").value == "")
+            document.getElementById("time").style.display = 'block';
+
+        else {
+            document.getElementById("time").style.display = 'none';
+            d++
+        }
+        if (document.getElementById("Text").value == "")
+            document.getElementById("text").style.display = 'block';
+        else {
+            document.getElementById("text").style.display = 'none';
+            d++;
+            if (d == 3)
+                save();
+        }
+        //    if(document.getElementById("Date").value > Date.now())
+        //    document.getElementById("date").style.display='block';
+
+
+        function save() {
+            let newPerson = {};
+            for (key of ListTasks) {
+                newPerson[key] = document.getElementById(key).value;
+
+            }
+
+            let currentList = getCurrentList();
+            currentList.push(newPerson);
+            localStorage.setItem("peopleList", JSON.stringify(currentList));
+            showCurrentList();
+        }
+    }
+    function showCurrentList() {
+        var num = 0;
+
+        document.getElementById("res").innerHTML = "";
+
+        for (person of getCurrentList()) {
+
+            document.getElementById("res").innerHTML += `
+            <div id="note${num}"  class="myTask w3-animate-opacity" draggable="true" ondragstart="drag(event)"‏ >
+                    <textarea  class="text">${person["Text"]}</textarea>
+                    <p  class="time">${person["Time"]}</p><br>
+                    <p  class="date">${person["Date"]}</p>
+                    <span  id="delTask" class="glyphicon glyphicon-remove delICon"  onclick="earseItem(person,${num++})"></span> </div>
+            `
+
+        }
+    }
+    function earse(id) {
+        document.getElementById(id).value = "";
+
+
+    }
+    function earseItem(task, num) {
+        var list = getCurrentList();
+        list.splice(num, 1);
+        localStorage.setItem("peopleList", JSON.stringify(list));
+        showCurrentList();
+
+        // onclick="earseItem(person)"
+    }
+
+    function getCurrentList() {
+        let list = localStorage.getItem("peopleList");  //if "peopleList" does not exist in the local storage we will get null
+        return (list) ? JSON.parse(list) : [];
+    }
+
+
+    function clearAllData() {
+        localStorage.clear();
+        showCurrentList();
+    }
+
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+    }
+    function allowDrop(ev) {
+        ev.preventDefault();
+    }
+
+    function drop(ev) {
+        ev.preventDefault();
+        var data = ev.dataTransfer.getData("text");
+        ev.target.appendChild(document.getElementById(data));
+    }
+
+
+</script>
+<style>
+    body {
+        background-color: burlywood;
+    }
+
+    #task {
+        margin-left: 400px;
+        background-color: burlywood;
+
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    #delTask {
+        visibility: hidden;
+    }
+
+    .myTask:hover #delTask {
+
+        visibility: visible;
+
+
+    }
+
+    .text {
+        text-align: center;
+        width: 23vh;
+
+    }
+
+
+    .time {
+        float: left;
+        margin-top: 19px;
+        margin-top: 12vh;
+    }
+
+    .date {
+        float: left;
+        width: 100%;
+        text-align: left;
+        margin-bottom: 8vh;
+
+
+    }
+
+    #time {
+        display: none;
+
+    }
+
+    #date {
+
+        display: none;
+    }
+
+    #text {
+
+        display: none;
+
+    }
+
+    .myTask {
+
+        background-color: gold;
+        width: 15vw;
+        height: 30vh;
+        float: right;
+        margin-right: 9vh;
+        margin-top: 9vh;
+        position: relative;
+        /* animation: fadeIn 3s; */
+    }
+
+    #res {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    @keyframes fadeIn {
+        0% {
+            opacity: 1;
+            margin-left: 0%;
+        }
+        50% {
+            opacity: 1;
+            margin-left: 50%;
+
+        }
+        100% {
+            opacity: 1;
+            margin-left: 20%;
+        }
+    }
+</style>
+
+<body onload="showCurrentList()">
+    <h1>"My Tasks"</h1>
+    <div id="task">
+
+        <input pattern="^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[1,3-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$"
+            id="Date" type="date" placeholder="enter date for task" required>
+        <button onclick="earse('Date')">x</button>
+        <br>
+        <label id="date">"date is empty"</label>
+        <br>
+        <br>
+        <input id="Time" type="time" placeholder="enter time for task" required>
+        <button onclick="earse('Time')">x</button>
+        <label id="time">"time is empty"</label>
+
+        <br>
+        <input id="Text" type="text" placeholder="enter text for task" required>
+        <button onclick="earse('Text')">x</button>
+        <label id="text">"text is empty"</label>
+
+        <br>
+        <button type="submit" onclick="submit()">save</button>
+
+        <br>
+    </div>
+
+
+    <div id="res" ondrop="drop(event)" ondragover="allowDrop(event)">
+
+
+
+
+
+
+
+    </div>
+    </div>
+</body>
+
+</html>
